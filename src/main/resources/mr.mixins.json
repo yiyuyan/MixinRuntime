@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "cn.ksmcbrigade.mr.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mr.refmap.json",
+  "plugin": "cn.ksmcbrigade.mr.mixin.MixinPlugin",
+  "mixins": [
+    "ServerMainMixin"
+  ],
+  "client": [
+    "ClientMainMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
