@@ -16,6 +16,6 @@ public class MixinRuntimeMod {
         }
 
 
-        Constants.LOGGER.info("{}Main Loaded.",MixinRuntimeMod.class.getSimpleName());
+        Constants.LOGGER.info("{} Loaded.",MixinRuntimeMod.class.getSimpleName());
     }
 }

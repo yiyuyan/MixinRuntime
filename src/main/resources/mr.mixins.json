@@ -4,9 +4,10 @@
   "package": "cn.ksmcbrigade.mr.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "mr.refmap.json",
-  "plugin": "cn.ksmcbrigade.mr.mixin.MixinPlugin",
+  "plugin": "cn.ksmcbrigade.mr.mixin.MixinRuntimePlugin",
   "mixins": [
-    "GL11Mixin"
+    "test.GL11Mixin",
+    "test.MinecraftMixin"
   ],
   "client": [],
   "injectors": {

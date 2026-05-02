@@ -1,12 +1,12 @@
 package cn.ksmcbrigade.mr.mixin;
 
 import cn.ksmcbrigade.mr.Constants;
-import cn.ksmcbrigade.mr.MixinRuntimeMod;
+import cn.ksmcbrigade.mr.utils.ModuleUtils;
 import cn.ksmcbrigade.mr.utils.UnsafeUtils;
 import cn.ksmcbrigade.mr.utils.InstUtils;
 import cn.ksmcbrigade.mr.utils.mixin.MixinAgentUtils;
 import cn.ksmcbrigade.mr.utils.mixin.MixinUtils;
-import cpw.mods.modlauncher.Launcher;
+import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -18,14 +18,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MixinPlugin implements IMixinConfigPlugin {
+public class MixinRuntimePlugin implements IMixinConfigPlugin {
+
+    public static boolean loaded = false;
+
     @Override
     public void onLoad(String mixinPackage) {
-        Constants.LOGGER.info("{} Loading...", MixinRuntimeMod.class.getSimpleName());
+        if(loaded) return;
 
-        System.getProperties().put("launcher",Launcher.INSTANCE);
+        Constants.LOGGER.info("{} Loading...", MixinRuntimePlugin.class.getSimpleName());
+
+        if(MixinRuntimePlugin.class.getClassLoader() instanceof TransformingClassLoader loader)
+            System.getProperties().put("transforming_class_loader",loader);
+
         if(FMLLoader.isProduction()){
-            UnsafeUtils.loadAgent(UnsafeUtils.getJarPath(MixinPlugin.class));
+            UnsafeUtils.loadAgent(UnsafeUtils.getJarPath(MixinRuntimePlugin.class));
         }
         else{
             UnsafeUtils.loadAgent(
@@ -40,6 +47,10 @@ public class MixinPlugin implements IMixinConfigPlugin {
             );
         }
 
+        Constants.LOGGER.info("Opening modules...");
+        ModuleUtils.fixLwjglMixinAccess();
+        ModuleUtils.openAllModules();
+
         try {
             MixinAgentUtils.initAndEnableMixinAgent();
             MixinUtils.fixClassLoader(Objects.requireNonNull(MixinAgentUtils.getInst()));
@@ -48,6 +59,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
         } catch (Throwable e) {
            e.printStackTrace();
         }
+
+        loaded = true;
+        Constants.LOGGER.info("{} Loaded.", MixinRuntimePlugin.class.getSimpleName());
     }
 
     @Override
@@ -57,7 +71,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return false;
+        System.out.println("[MixinPlugin] shouldApplyMixin: " + mixinClassName + " -> " + targetClassName);
+        return true;
     }
 
     @Override

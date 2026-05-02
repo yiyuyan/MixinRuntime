@@ -1,4 +1,4 @@
-package cn.ksmcbrigade.mr.mixin;
+package cn.ksmcbrigade.mr.mixin.test;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL11C;

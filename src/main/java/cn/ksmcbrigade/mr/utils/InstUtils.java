@@ -5,7 +5,9 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
 import cn.ksmcbrigade.mr.Constants;
+import cn.ksmcbrigade.mr.transformers.util.ClassByteGetter;
 
+import java.lang.instrument.UnmodifiableClassException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,5 +49,14 @@ public class InstUtils {
         return getTransformersInfo(inst,retransformable).stream().map((info)->info.classFileTransformer).toList();
     }
 
-    public record ClassFileTransformerInfo(ClassFileTransformer classFileTransformer,String prefix){};
+    public static byte[] getClassBytes(Instrumentation inst,Class<?> clazz) throws UnmodifiableClassException {
+        ClassByteGetter getter = new ClassByteGetter(clazz);
+        inst.addTransformer(getter,true);
+        inst.retransformClasses(clazz);
+        while(getter.bytes==ClassByteGetter.WAITING_BYTES) Thread.yield();
+        inst.removeTransformer(getter);
+        return getter.bytes;
+    }
+
+    public record ClassFileTransformerInfo(ClassFileTransformer classFileTransformer,String prefix){}
 }

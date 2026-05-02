@@ -39,6 +39,18 @@ public class ModLauncherClassTrackerTransformer implements ClassFileTransformer 
 
                             return null;
                         }
+                        else if(name.equals("isClassLoaded")){
+                            System.out.println("[MixinRuntimeAgent] Replacing isClassLoaded method");
+
+                            MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
+                            mv.visitCode();
+                            mv.visitInsn(Opcodes.ICONST_0);
+                            mv.visitInsn(Opcodes.IRETURN);
+                            mv.visitMaxs(1, 1);
+                            mv.visitEnd();
+
+                            return null;
+                        }
                         return super.visitMethod(access, name, descriptor, signature, exceptions);
                     }
                 };
