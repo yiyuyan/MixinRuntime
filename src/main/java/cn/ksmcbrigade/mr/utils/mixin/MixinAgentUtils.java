@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MixinAgentUtils {
+
     public static List<MixinAgent> getAgents(){
         Object agents = UnsafeUtils.getFieldValue(MixinAgent.class,"agents",Object.class);
         if(agents instanceof List){
@@ -27,6 +28,10 @@ public class MixinAgentUtils {
         else{
             return new ArrayList<>();
         }
+    }
+
+    public static MixinAgent getFirstAgent(){
+        return getAgents().get(0);
     }
 
     public static void setAgents(List<MixinAgent> agents) throws IllegalAccessException {
@@ -96,7 +101,7 @@ public class MixinAgentUtils {
         System.setProperty("mixin.debug.verbose","true");
     }
 
-    public static void attachAgent(){
+    public static void initAndEnableMixinAgent(){
 
         setSystemConfigs();
 

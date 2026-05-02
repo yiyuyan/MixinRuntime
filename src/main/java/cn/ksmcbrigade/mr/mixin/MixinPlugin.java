@@ -3,7 +3,9 @@ package cn.ksmcbrigade.mr.mixin;
 import cn.ksmcbrigade.mr.Constants;
 import cn.ksmcbrigade.mr.MixinRuntimeMod;
 import cn.ksmcbrigade.mr.utils.UnsafeUtils;
+import cn.ksmcbrigade.mr.utils.InstUtils;
 import cn.ksmcbrigade.mr.utils.mixin.MixinAgentUtils;
+import cn.ksmcbrigade.mr.utils.mixin.MixinUtils;
 import cpw.mods.modlauncher.Launcher;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;
@@ -11,7 +13,9 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class MixinPlugin implements IMixinConfigPlugin {
@@ -36,7 +40,14 @@ public class MixinPlugin implements IMixinConfigPlugin {
             );
         }
 
-        MixinAgentUtils.attachAgent();
+        try {
+            MixinAgentUtils.initAndEnableMixinAgent();
+            MixinUtils.fixClassLoader(Objects.requireNonNull(MixinAgentUtils.getInst()));
+
+            System.out.println(Arrays.toString(InstUtils.getTransformers(MixinAgentUtils.getInst(),true).toArray()));
+        } catch (Throwable e) {
+           e.printStackTrace();
+        }
     }
 
     @Override

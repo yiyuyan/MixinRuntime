@@ -6,11 +6,9 @@
   "refmap": "mr.refmap.json",
   "plugin": "cn.ksmcbrigade.mr.mixin.MixinPlugin",
   "mixins": [
-    "ServerMainMixin"
+    "GL11Mixin"
   ],
-  "client": [
-    "ClientMainMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },
