@@ -218,7 +218,7 @@ public class UnsafeUtils {
         }
     }
 
-    private static void openAttachModule() {
+    public static void openAttachModule() {
         Module currentModule = UnsafeUtils.class.getModule();
         ModuleLayer bootLayer = ModuleLayer.boot();
         Optional attachModuleOpt = bootLayer.findModule("jdk.attach");

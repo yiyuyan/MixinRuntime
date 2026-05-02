@@ -47,8 +47,9 @@ public class MixinRuntimePlugin implements IMixinConfigPlugin {
         try {
             MixinAgentUtils.initAndEnableMixinAgent();
             MixinUtils.fixClassLoader(Objects.requireNonNull(MixinAgentUtils.getInst()));
+            //MixinUtils.applyAllowEnhancedClassRedefinition();
 
-            System.out.println(Arrays.toString(InstUtils.getTransformers(MixinAgentUtils.getInst(),true).toArray()));
+            Constants.LOGGER.debug("Transformers: {}",Arrays.toString(InstUtils.getTransformers(MixinAgentUtils.getInst(),true).toArray()));
         } catch (Throwable e) {
            e.printStackTrace();
         }

@@ -3,8 +3,16 @@ package cn.ksmcbrigade.mr.utils.mixin;
 import cn.ksmcbrigade.mr.Constants;
 import cn.ksmcbrigade.mr.transformers.MixinProcessorTransformer;
 import cn.ksmcbrigade.mr.transformers.ModLauncherClassTrackerTransformer;
+import cn.ksmcbrigade.mr.transformers.debug.ModuleClassLoaderTransformer;
 import cn.ksmcbrigade.mr.utils.InstUtils;
+import com.sun.tools.attach.AgentInitializationException;
+import com.sun.tools.attach.AgentLoadException;
+import com.sun.tools.attach.AttachNotSupportedException;
+import com.sun.tools.attach.VirtualMachine;
+import cpw.mods.cl.ModuleClassLoader;
 import cpw.mods.modlauncher.TransformingClassLoader;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -14,10 +22,14 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.transformer.Config;
 import org.spongepowered.asm.service.modlauncher.ModLauncherClassTracker;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class MixinUtils {
@@ -27,17 +39,45 @@ public class MixinUtils {
         if(MixinUtils.class.getClassLoader() instanceof TransformingClassLoader loader)
             System.getProperties().put("transforming_class_loader",loader);
 
-        //inst.addTransformer(new ModuleClassLoaderTransformer(),true);
+        inst.addTransformer(new ModuleClassLoaderTransformer(),true);
 
         inst.addTransformer(new ModLauncherClassTrackerTransformer(),true);
         inst.addTransformer(new MixinProcessorTransformer(),true);
 
         //if(!FMLLoader.isProduction())inst.addTransformer(new HotMixinTransformer(),true);
 
-        //inst.retransformClasses(ModuleClassLoader.class);
+        inst.retransformClasses(ModuleClassLoader.class);
 
         inst.retransformClasses(ModLauncherClassTracker.class);
         inst.retransformClasses(Class.forName("org.spongepowered.asm.mixin.transformer.MixinProcessor"));
+    }
+
+    //only for windows and jbr17.0.14(vanilla)
+    public static void applyAllowEnhancedClassRedefinition() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException, InterruptedException {
+
+        File flagHook = new File("flagHook.dll");
+
+        FileUtils.writeByteArrayToFile(flagHook, IOUtils.toByteArray(Objects.requireNonNull(MixinUtils.class.getResourceAsStream("/flagHook.dll"))));
+
+        String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+        VirtualMachine vm = VirtualMachine.attach(pid);
+
+        vm.loadAgentPath(flagHook.toString());
+
+        vm.detach();
+
+        ProcessBuilder builder = new ProcessBuilder(
+                Paths.get(System.getProperty("java.home"))
+                        .resolve("bin")
+                        .resolve("jinfo")
+                        .toAbsolutePath()
+                        .toString(),
+                "-flag",
+                "+AllowEnhancedClassRedefinition",
+                pid
+        );
+        builder.inheritIO();
+        builder.start().waitFor();
     }
 
     public static Config toConfig(String configFile){return Config.create(configFile, MixinEnvironment.getCurrentEnvironment());}

@@ -5,9 +5,6 @@ import org.lwjgl.opengl.GL11C;
 import org.lwjgl.system.NativeType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GL11.class)
 public class GL11Mixin {
@@ -22,8 +19,13 @@ public class GL11Mixin {
         GL11C.glCullFace(mode);
     }
 
-    @Inject(remap = false,method = "glDepthFunc",at = @At("HEAD"))
-    private static void glDepth(int func, CallbackInfo ci) {
+    /**
+     * @author KSMc_brigade
+     * @reason re
+     */
+    @Overwrite(remap = false)
+    public static void glDepthFunc(@NativeType("GLenum") int func) {
         System.out.println("RuntimeInject successfully2222222222222!!!!");
+        GL11C.glDepthFunc(func);
     }
 }
