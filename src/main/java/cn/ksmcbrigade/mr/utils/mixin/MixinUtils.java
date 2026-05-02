@@ -3,9 +3,7 @@ package cn.ksmcbrigade.mr.utils.mixin;
 import cn.ksmcbrigade.mr.Constants;
 import cn.ksmcbrigade.mr.transformers.MixinProcessorTransformer;
 import cn.ksmcbrigade.mr.transformers.ModLauncherClassTrackerTransformer;
-import cpw.mods.cl.ModuleClassLoader;
 import cpw.mods.modlauncher.TransformingClassLoader;
-import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -15,7 +13,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.transformer.Config;
 import org.spongepowered.asm.service.modlauncher.ModLauncherClassTracker;
 
-import java.io.File;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
@@ -36,7 +33,8 @@ public class MixinUtils {
 
         //if(!FMLLoader.isProduction())inst.addTransformer(new HotMixinTransformer(),true);
 
-        inst.retransformClasses(ModuleClassLoader.class);
+        //inst.retransformClasses(ModuleClassLoader.class);
+
         inst.retransformClasses(ModLauncherClassTracker.class);
         inst.retransformClasses(Class.forName("org.spongepowered.asm.mixin.transformer.MixinProcessor"));
     }

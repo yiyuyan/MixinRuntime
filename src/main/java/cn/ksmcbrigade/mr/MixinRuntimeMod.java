@@ -10,7 +10,7 @@ public class MixinRuntimeMod {
     public MixinRuntimeMod() {
 
         try {
-            if(!FMLLoader.isProduction())MixinUtils.getMixins("mr.mixins.json");
+            MixinUtils.getMixins("mr.mixins.json");
         } catch (Throwable e) {
             e.printStackTrace();
         }

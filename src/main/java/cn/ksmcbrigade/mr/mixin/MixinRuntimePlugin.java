@@ -7,7 +7,6 @@ import cn.ksmcbrigade.mr.utils.InstUtils;
 import cn.ksmcbrigade.mr.utils.mixin.MixinAgentUtils;
 import cn.ksmcbrigade.mr.utils.mixin.MixinUtils;
 import cpw.mods.modlauncher.TransformingClassLoader;
-import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
