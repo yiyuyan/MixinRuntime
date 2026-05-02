@@ -3,6 +3,7 @@ package cn.ksmcbrigade.mr.utils.mixin;
 import cn.ksmcbrigade.mr.Constants;
 import cn.ksmcbrigade.mr.transformers.MixinProcessorTransformer;
 import cn.ksmcbrigade.mr.transformers.ModLauncherClassTrackerTransformer;
+import cn.ksmcbrigade.mr.utils.InstUtils;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -100,7 +101,7 @@ public class MixinUtils {
         List<String> targets = new ArrayList<>();
 
         try {
-            ClassReader reader = new ClassReader(mixinClass.getName());
+            ClassReader reader = new ClassReader(InstUtils.getClassBytes(Objects.requireNonNull(MixinAgentUtils.getInst()),mixinClass));
             ClassNode classNode = new ClassNode();
             reader.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
