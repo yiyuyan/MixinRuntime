@@ -52,7 +52,8 @@ public class MixinUtils {
         inst.retransformClasses(Class.forName("org.spongepowered.asm.mixin.transformer.MixinProcessor"));
     }
 
-    //only for windows and jbr17.0.14(vanilla)
+    /*
+    only for windows and jbr17.0.14(vanilla)
     public static void applyAllowEnhancedClassRedefinition() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException, InterruptedException {
 
         File flagHook = new File("flagHook.dll");
@@ -78,7 +79,7 @@ public class MixinUtils {
         );
         builder.inheritIO();
         builder.start().waitFor();
-    }
+    }*/
 
     public static Config toConfig(String configFile){return Config.create(configFile, MixinEnvironment.getCurrentEnvironment());}
 
