@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "cn.ksmcbrigade.mr.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "plugin": "cn.ksmcbrigade.mr.mixin.MixinRuntimePlugin",
+  "client": [
+  ],
+  "mixins": [
+    "test.GL11Mixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
