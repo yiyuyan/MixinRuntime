@@ -31,7 +31,15 @@ public class MixinTransformerUtils {
     }
 
     public static byte[] transform(IMixinTransformer transformer,Instrumentation inst,Class<?> clazz) throws UnmodifiableClassException {
-        return transformer.transformClassBytes(clazz.getName(),clazz.getName(), InstUtils.getClassBytes(inst,clazz));
+        try {
+            return transformer.transformClassBytes(clazz.getName(),clazz.getName(), InstUtils.getClassBytes(inst,clazz));
+        } catch (Throwable e) {
+            try {
+                return InstUtils.getClassBytes(inst,clazz);
+            } catch (UnmodifiableClassException ex) {
+                return null;
+            }
+        }
     }
 
     public static byte[] transformDirect(Class<?> clazz) throws UnmodifiableClassException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {

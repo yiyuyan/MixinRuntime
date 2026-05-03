@@ -5,7 +5,7 @@ license = "MIT"
 
 [[mods]]
 modId = "mr"
-version = "1.0.0-mc1.21"
+version = "1.0.1-mc1.21"
 displayName = "MixinRuntime"
 authors = "commonplace(KSmc_brigade)"
 description = '''
