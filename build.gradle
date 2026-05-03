@@ -15,6 +15,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'maven-publish'
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -212,4 +213,21 @@ tasks.withType(JavaCompile).configureEach {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            pom.withXml {
+                def dependenciesNode = asNode().dependencies
+                dependenciesNode.dependency.findAll {
+                    it.groupId.text() == "net.minecraftforge" && it.artifactId.text() == "forge"
+                }.each {
+                    dependenciesNode.remove(it)
+                }
+            }
+        }
+    }
 }
