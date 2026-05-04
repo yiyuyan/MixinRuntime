@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "mr"
+version = "1.0.1"
+displayName = "MixinRuntime"
+authors = "commonplace(KSmc_brigade)"
+description = '''
+There's nothing.
+Fuck NeoForge Mod Loader!
+'''
+#logoFile = ""
+
+[[dependencies.mr]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "mr.mixins.json"
