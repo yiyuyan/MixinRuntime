@@ -7,7 +7,6 @@
   "client": [
   ],
   "mixins": [
-    "test.GL11Mixin"
   ],
   "injectors": {
     "defaultRequire": 1

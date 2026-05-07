@@ -73,7 +73,7 @@ public class MixinUtils {
 
     public static Config toConfig(String configFile){return Config.create(configFile, MixinEnvironment.getCurrentEnvironment());}
 
-    public static void getMixins(String configFile) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static void reapplyMixinConfigs(String configFile) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Config config = toConfig(configFile);
         IMixinConfig iMixinConfig = config.getConfig();
 
@@ -84,18 +84,22 @@ public class MixinUtils {
         for (String s : MixinConfigUtils.getGlobalMixinList(iMixinConfig)) {
             try {
                 for (Class<?> targetClass : getTargetClasses(Class.forName(s))) {
-                    Constants.LOGGER.info("mixin utils redefining {}",targetClass);
-                    byte[] bytes = MixinTransformerUtils.transform(targetClass);
-                    //FileUtils.writeByteArrayToFile(new File(targetClass.getName()+".class"),bytes);
-                    Objects.requireNonNull(MixinAgentUtils.getInst()).redefineClasses(
-                            new ClassDefinition(
-                                    targetClass,
-                                    bytes
-                            )
-                    );
+                    try {
+                        //Constants.LOGGER.info("mixin utils redefining {}",targetClass);
+                        byte[] bytes = MixinTransformerUtils.transform(targetClass);
+                        //FileUtils.writeByteArrayToFile(new File(targetClass.getName()+".class"),bytes);
+                        Objects.requireNonNull(MixinAgentUtils.getInst()).redefineClasses(
+                                new ClassDefinition(
+                                        targetClass,
+                                        bytes
+                                )
+                        );
+                    } catch (UnmodifiableClassException | ClassNotFoundException e) {
+                        Constants.LOGGER.error("Failed to transform and redefine {}.",targetClass,e);
+                    }
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
+                Constants.LOGGER.error("Failed to reapply mixin configs.",e);
             }
         }
     }
