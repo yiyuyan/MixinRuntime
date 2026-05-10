@@ -8,7 +8,6 @@ import cn.ksmcbrigade.mr.transformers.debug.ModuleClassLoaderTransformer;
 import cn.ksmcbrigade.mr.utils.InstUtils;
 import net.neoforged.fml.classloading.ModuleClassLoader;
 import net.neoforged.fml.classloading.transformation.TransformingClassLoader;
-import net.neoforged.fml.loading.mixin.FMLMixinClassProcessor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -78,7 +77,7 @@ public class MixinUtils {
 
     public static Config toConfig(String configFile){return Config.create(configFile, MixinEnvironment.getCurrentEnvironment());}
 
-    public static void getMixins(String configFile) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static void injectMixinConfigs(String configFile) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Config config = toConfig(configFile);
         IMixinConfig iMixinConfig = config.getConfig();
 
@@ -89,18 +88,22 @@ public class MixinUtils {
         for (String s : MixinConfigUtils.getGlobalMixinList(iMixinConfig)) {
             try {
                 for (Class<?> targetClass : getTargetClasses(Class.forName(s))) {
-                    Constants.LOGGER.info("mixin utils redefining {}",targetClass);
-                    byte[] bytes = MixinTransformerUtils.transform(targetClass);
-                    //FileUtils.writeByteArrayToFile(new File(targetClass.getName()+".class"),bytes);
-                    Objects.requireNonNull(MixinAgentUtils.getInst()).redefineClasses(
-                            new ClassDefinition(
-                                    targetClass,
-                                    bytes
-                            )
-                    );
+                    try {
+                        Constants.LOGGER.info("mixin utils redefining {}",targetClass);
+                        byte[] bytes = MixinTransformerUtils.transform(targetClass);
+                        //FileUtils.writeByteArrayToFile(new File(targetClass.getName()+".class"),bytes);
+                        Objects.requireNonNull(MixinAgentUtils.getInst()).redefineClasses(
+                                new ClassDefinition(
+                                        targetClass,
+                                        bytes
+                                )
+                        );
+                    } catch (UnmodifiableClassException | ClassNotFoundException e) {
+                        Constants.LOGGER.error("Failed to reapply class: {} because: {}",targetClass,e.getMessage());
+                    }
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
+                Constants.LOGGER.error("Failed to inject mixin configs.",e);
             }
         }
     }
